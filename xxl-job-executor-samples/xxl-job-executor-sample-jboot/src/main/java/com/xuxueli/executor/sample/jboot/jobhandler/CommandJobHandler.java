@@ -47,7 +47,7 @@ public class CommandJobHandler extends IJobHandler {
         if (exitValue == 0) {
             return IJobHandler.SUCCESS;
         } else {
-            return new ReturnT<String>(IJobHandler.FAIL.getCode(), "command exit value("+exitValue+") is failed");
+            return new ReturnT<String>(IJobHandler.FAIL.getCode(), "command exit value(" + exitValue + ") is failed");
         }
     }
 

@@ -20,6 +20,7 @@ public class FrameLessXxlJobConfig {
 
 
     private static FrameLessXxlJobConfig instance = new FrameLessXxlJobConfig();
+
     public static FrameLessXxlJobConfig getInstance() {
         return instance;
     }
@@ -75,7 +76,8 @@ public class FrameLessXxlJobConfig {
         try {
             ClassLoader loder = Thread.currentThread().getContextClassLoader();
 
-            in = new InputStreamReader(loder.getResourceAsStream(propertyFileName), "UTF-8");;
+            in = new InputStreamReader(loder.getResourceAsStream(propertyFileName), "UTF-8");
+            ;
             if (in != null) {
                 Properties prop = new Properties();
                 prop.load(in);

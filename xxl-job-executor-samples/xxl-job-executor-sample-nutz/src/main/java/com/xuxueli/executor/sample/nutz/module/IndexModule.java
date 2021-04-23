@@ -6,11 +6,11 @@ import org.nutz.mvc.annotation.Ok;
 
 @IocBean
 public class IndexModule {
-	
-	@At("/")
-	@Ok("json")
-	public String index() {
-		return "xxl job executor running.";
-	}
+
+    @At("/")
+    @Ok("json")
+    public String index() {
+        return "xxl job executor running.";
+    }
 
 }

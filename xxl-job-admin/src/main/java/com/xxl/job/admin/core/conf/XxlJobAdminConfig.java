@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     private static XxlJobAdminConfig adminConfig = null;
+
     public static XxlJobAdminConfig getAdminConfig() {
         return adminConfig;
     }

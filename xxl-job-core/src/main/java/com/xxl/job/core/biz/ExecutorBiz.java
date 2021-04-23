@@ -11,6 +11,7 @@ public interface ExecutorBiz {
 
     /**
      * beat
+     *
      * @return
      */
     public ReturnT<String> beat();
@@ -25,6 +26,7 @@ public interface ExecutorBiz {
 
     /**
      * kill
+     *
      * @param jobId
      * @return
      */
@@ -32,6 +34,7 @@ public interface ExecutorBiz {
 
     /**
      * log
+     *
      * @param logDateTim
      * @param logId
      * @param fromLineNum
@@ -41,6 +44,7 @@ public interface ExecutorBiz {
 
     /**
      * run
+     *
      * @param triggerParam
      * @return
      */

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 任务Handler示例（Bean模式）
- *
+ * <p>
  * 开发步骤：
  * 1、继承"IJobHandler"：“com.xxl.job.core.handler.IJobHandler”；
  * 2、注册到执行器工厂：在 "JFinalCoreConfig.initXxlJobExecutor" 中手动注册，注解key值对应的是调度中心新建任务的JobHandler属性的值。
@@ -18,15 +18,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class DemoJobHandler extends IJobHandler {
 
-	@Override
-	public ReturnT<String> execute(String param) throws Exception {
-		XxlJobLogger.log("XXL-JOB, Hello World.");
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        XxlJobLogger.log("XXL-JOB, Hello World.");
 
-		for (int i = 0; i < 5; i++) {
-			XxlJobLogger.log("beat at:" + i);
-			TimeUnit.SECONDS.sleep(2);
-		}
-		return SUCCESS;
-	}
+        for (int i = 0; i < 5; i++) {
+            XxlJobLogger.log("beat at:" + i);
+            TimeUnit.SECONDS.sleep(2);
+        }
+        return SUCCESS;
+    }
 
 }

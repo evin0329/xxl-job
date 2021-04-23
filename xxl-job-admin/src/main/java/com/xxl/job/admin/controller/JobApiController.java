@@ -34,9 +34,9 @@ public class JobApiController {
     /**
      * valid access token
      */
-    private void validAccessToken(HttpServletRequest request){
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken()!=null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length()>0
+    private void validAccessToken(HttpServletRequest request) {
+        if (XxlJobAdminConfig.getAdminConfig().getAccessToken() != null
+                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length() > 0
                 && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
             throw new XxlJobException("The access token is wrong.");
         }
@@ -45,7 +45,7 @@ public class JobApiController {
     /**
      * parse Param
      */
-    private Object parseParam(String data, Class<?> parametrized, Class<?>... parameterClasses){
+    private Object parseParam(String data, Class<?> parametrized, Class<?>... parameterClasses) {
         Object param = null;
         try {
             if (parameterClasses != null) {
@@ -53,8 +53,9 @@ public class JobApiController {
             } else {
                 param = JacksonUtil.readValue(data, parametrized);
             }
-        } catch (Exception e) { }
-        if (param==null) {
+        } catch (Exception e) {
+        }
+        if (param == null) {
             throw new XxlJobException("The request data invalid.");
         }
         return param;
@@ -70,7 +71,7 @@ public class JobApiController {
      */
     @RequestMapping("/callback")
     @ResponseBody
-    @PermissionLimit(limit=false)
+    @PermissionLimit(limit = false)
     public ReturnT<String> callback(HttpServletRequest request, @RequestBody(required = false) String data) {
         // valid
         validAccessToken(request);
@@ -83,7 +84,6 @@ public class JobApiController {
     }
 
 
-
     /**
      * registry
      *
@@ -92,7 +92,7 @@ public class JobApiController {
      */
     @RequestMapping("/registry")
     @ResponseBody
-    @PermissionLimit(limit=false)
+    @PermissionLimit(limit = false)
     public ReturnT<String> registry(HttpServletRequest request, @RequestBody(required = false) String data) {
         // valid
         validAccessToken(request);
@@ -112,7 +112,7 @@ public class JobApiController {
      */
     @RequestMapping("/registryRemove")
     @ResponseBody
-    @PermissionLimit(limit=false)
+    @PermissionLimit(limit = false)
     public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody(required = false) String data) {
         // valid
         validAccessToken(request);
