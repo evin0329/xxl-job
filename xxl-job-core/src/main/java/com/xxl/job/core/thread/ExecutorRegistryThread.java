@@ -42,20 +42,28 @@ public class ExecutorRegistryThread {
             public void run() {
 
                 // registry
+                // 注册执行器
                 while (!toStop) {
                     try {
+                        // 注册参数
                         RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName, address);
+                        // 给所有调度中心注册当前执行器
                         for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
                             try {
+                                // 注册当前实例执行器
                                 ReturnT<String> registryResult = adminBiz.registry(registryParam);
+                                // 注册成功
                                 if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
                                     registryResult = ReturnT.SUCCESS;
                                     logger.debug(">>>>>>>>>>> xxl-job registry success, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
                                     break;
-                                } else {
+                                }
+                                // 注册失败
+                                else {
                                     logger.info(">>>>>>>>>>> xxl-job registry fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
                                 }
                             } catch (Exception e) {
+                                // 注册错误
                                 logger.info(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
                             }
 
@@ -67,6 +75,7 @@ public class ExecutorRegistryThread {
 
                     }
 
+                    // RegistryConfig.BEAT_TIMEOUT秒后重试
                     try {
                         if (!toStop) {
                             TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
@@ -79,19 +88,26 @@ public class ExecutorRegistryThread {
                 }
 
                 // registry remove
+                // 移除执行器
                 try {
                     RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName, address);
+                    // 给所有调度中心移除当前执行器
                     for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
                         try {
+                            // 给该调度中心移除当前实例执行器
                             ReturnT<String> registryResult = adminBiz.registryRemove(registryParam);
+                            // 移除成功
                             if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
                                 registryResult = ReturnT.SUCCESS;
                                 logger.info(">>>>>>>>>>> xxl-job registry-remove success, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
                                 break;
-                            } else {
+                            }
+                            // 移除失败
+                            else {
                                 logger.info(">>>>>>>>>>> xxl-job registry-remove fail, registryParam:{}, registryResult:{}", new Object[]{registryParam, registryResult});
                             }
                         } catch (Exception e) {
+                            // 移除错误
                             if (!toStop) {
                                 logger.info(">>>>>>>>>>> xxl-job registry-remove error, registryParam:{}", registryParam, e);
                             }

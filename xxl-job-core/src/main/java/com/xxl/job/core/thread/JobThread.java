@@ -37,7 +37,7 @@ public class JobThread extends Thread {
     private String stopReason;
 
     private boolean running = false;    // if running job
-    private int idleTimes = 0;            // idel times
+    private int idleTimes = 0;            // idel times (空闲时间)
 
 
     public JobThread(int jobId, IJobHandler handler) {
@@ -97,6 +97,7 @@ public class JobThread extends Thread {
     public void run() {
 
         // init
+        // 调用handle初始化方法
         try {
             handler.init();
         } catch (Throwable e) {
@@ -104,7 +105,9 @@ public class JobThread extends Thread {
         }
 
         // execute
+        // 执行
         while (!toStop) {
+            //
             running = false;
             idleTimes++;
 
@@ -112,15 +115,19 @@ public class JobThread extends Thread {
             ReturnT<String> executeResult = null;
             try {
                 // to check toStop signal, we need cycle, so wo cannot use queue.take(), instand of poll(timeout)
+                // 轮询是否有新的任务
                 triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
+                // 是否有新任务
                 if (triggerParam != null) {
-                    running = true;
-                    idleTimes = 0;
+                    running = true;                                         // 标记正在运行
+                    idleTimes = 0;                                          // 重置空闲时间
                     triggerLogIdSet.remove(triggerParam.getLogId());
 
                     // log filename, like "logPath/yyyy-MM-dd/9999.log"
+                    // 日志文件路径
                     String logFileName = XxlJobFileAppender.makeLogFileName(new Date(triggerParam.getLogDateTime()), triggerParam.getLogId());
                     XxlJobFileAppender.contextHolder.set(logFileName);
+                    // 分片contextHolder
                     ShardingUtil.setShardingVo(new ShardingUtil.ShardingVO(triggerParam.getBroadcastIndex(), triggerParam.getBroadcastTotal()));
 
                     // execute
@@ -150,14 +157,18 @@ public class JobThread extends Thread {
                         } finally {
                             futureThread.interrupt();
                         }
-                    } else {
+                    }
+                    // 只是执行任务 不做超时处理
+                    else {
                         // just execute
                         executeResult = handler.execute(triggerParam.getExecutorParams());
                     }
 
+                    // 执行结果如果为空，则返回失败
                     if (executeResult == null) {
                         executeResult = IJobHandler.FAIL;
                     } else {
+                        // 设置执行结果的消息
                         executeResult.setMsg(
                                 (executeResult != null && executeResult.getMsg() != null && executeResult.getMsg().length() > 50000)
                                         ? executeResult.getMsg().substring(0, 50000).concat("...")
@@ -166,7 +177,9 @@ public class JobThread extends Thread {
                     }
                     XxlJobLogger.log("<br>----------- xxl-job job execute end(finish) -----------<br>----------- ReturnT:" + executeResult);
 
-                } else {
+                }
+                else {
+                    // 如果空闲次数超过30并且队列中又没有新任务，则删除当前任务线程
                     if (idleTimes > 30) {
                         if (triggerQueue.size() == 0) {    // avoid concurrent trigger causes jobId-lost
                             XxlJobExecutor.removeJobThread(jobId, "excutor idel times over limit.");
@@ -189,15 +202,19 @@ public class JobThread extends Thread {
                     // callback handler info
                     if (!toStop) {
                         // commonm
+                        // 推送执行结果
                         TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), executeResult));
                     } else {
                         // is killed
+                        // 线程停止
                         ReturnT<String> stopResult = new ReturnT<String>(ReturnT.FAIL_CODE, stopReason + " [job running, killed]");
                         TriggerCallbackThread.pushCallBack(new HandleCallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), stopResult));
                     }
                 }
             }
         }
+
+        // ------------------------ 任务停止 ------------------------
 
         // callback trigger request in queue
         while (triggerQueue != null && triggerQueue.size() > 0) {
@@ -210,6 +227,7 @@ public class JobThread extends Thread {
         }
 
         // destroy
+        // 调用handle销毁方法
         try {
             handler.destroy();
         } catch (Throwable e) {

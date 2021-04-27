@@ -75,18 +75,22 @@ public class XxlJobExecutor {
         XxlJobFileAppender.initLogPath(logPath);
 
         // init invoker, admin-client
+        // 初始化adminClient
         initAdminBizList(adminAddresses, accessToken);
 
-
         // init JobLogFileCleanThread
+        // 初始化日志文件清除线程
         JobLogFileCleanThread.getInstance().start(logRetentionDays);
 
         // init TriggerCallbackThread
         TriggerCallbackThread.getInstance().start();
 
         // init executor-server
+        // 初始化执行服务器   port和ip为当前client的
         port = port > 0 ? port : NetUtil.findAvailablePort(9999);
         ip = (ip != null && ip.trim().length() > 0) ? ip : IpUtil.getIp();
+
+        // 初始化
         initRpcProvider(ip, port, appName, accessToken);
     }
 
@@ -119,6 +123,7 @@ public class XxlJobExecutor {
 
     private void initAdminBizList(String adminAddresses, String accessToken) throws Exception {
         if (adminAddresses != null && adminAddresses.trim().length() > 0) {
+            // 根据admin地址创建AdminBizClient集合
             for (String address : adminAddresses.trim().split(",")) {
                 if (address != null && address.trim().length() > 0) {
 
@@ -155,6 +160,7 @@ public class XxlJobExecutor {
 
         xxlRpcProviderFactory = new XxlRpcProviderFactory();
 
+        // 设置 http client
         xxlRpcProviderFactory.setServer(NettyHttpServer.class);
         xxlRpcProviderFactory.setSerializer(HessianSerializer.class);
         xxlRpcProviderFactory.setCorePoolSize(20);
@@ -169,6 +175,7 @@ public class XxlJobExecutor {
         xxlRpcProviderFactory.addService(ExecutorBiz.class.getName(), null, new ExecutorBizImpl());
 
         // start
+        // 开启远程调用服务
         xxlRpcProviderFactory.start();
 
     }
@@ -236,8 +243,10 @@ public class XxlJobExecutor {
     private static ConcurrentMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<Integer, JobThread>();
 
     public static JobThread registJobThread(int jobId, IJobHandler handler, String removeOldReason) {
+        // 创建新的任务线程
         JobThread newJobThread = new JobThread(jobId, handler);
         newJobThread.start();
+
         logger.info(">>>>>>>>>>> xxl-job regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
 
         JobThread oldJobThread = jobThreadRepository.put(jobId, newJobThread);    // putIfAbsent | oh my god, map's put method return the old value!!!
