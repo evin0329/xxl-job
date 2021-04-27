@@ -33,6 +33,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
         initJobHandlerRepository(applicationContext);
 
         // init JobHandler Repository (for method)
+        // 初始化任务处理器（来自于方法上）
         initJobHandlerMethodRepository(applicationContext);
 
         // refresh GlueFactory
