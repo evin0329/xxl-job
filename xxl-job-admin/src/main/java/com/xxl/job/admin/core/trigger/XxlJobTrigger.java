@@ -101,6 +101,7 @@ public class XxlJobTrigger {
         String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) ? String.valueOf(index).concat("/").concat(String.valueOf(total)) : null;
 
         // 1、save log-id
+        // 1、保存日志id
         XxlJobLog jobLog = new XxlJobLog();
         jobLog.setJobGroup(jobInfo.getJobGroup());
         jobLog.setJobId(jobInfo.getId());
@@ -108,7 +109,9 @@ public class XxlJobTrigger {
         XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().save(jobLog);
         logger.debug(">>>>>>>>>>> xxl-job trigger start, jobId:{}", jobLog.getId());
 
+
         // 2、init trigger-param
+        // 2、初始化触发参数
         TriggerParam triggerParam = new TriggerParam();
         triggerParam.setJobId(jobInfo.getId());
         triggerParam.setExecutorHandler(jobInfo.getExecutorHandler());
@@ -123,27 +126,35 @@ public class XxlJobTrigger {
         triggerParam.setBroadcastIndex(index);
         triggerParam.setBroadcastTotal(total);
 
-        // 3、init address
+
+        // 3、初始化客户端地址
         String address = null;
         ReturnT<String> routeAddressResult = null;
         if (group.getRegistryList() != null && !group.getRegistryList().isEmpty()) {
+            // 是否分片广播策略
             if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) {
                 if (index < group.getRegistryList().size()) {
                     address = group.getRegistryList().get(index);
                 } else {
                     address = group.getRegistryList().get(0);
                 }
-            } else {
+            }
+            // 其他路由策略
+            else {
                 routeAddressResult = executorRouteStrategyEnum.getRouter().route(triggerParam, group.getRegistryList());
                 if (routeAddressResult.getCode() == ReturnT.SUCCESS_CODE) {
                     address = routeAddressResult.getContent();
                 }
             }
-        } else {
+        }
+        //没有注册的客户端地址
+        else {
             routeAddressResult = new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("jobconf_trigger_address_empty"));
         }
 
+
         // 4、trigger remote executor
+        // 4、触发远程执行器
         ReturnT<String> triggerResult = null;
         if (address != null) {
             // 运行执行器 发送执行任务调度请求到 address
@@ -152,7 +163,9 @@ public class XxlJobTrigger {
             triggerResult = new ReturnT<String>(ReturnT.FAIL_CODE, null);
         }
 
+
         // 5、collection trigger info
+        // 5、收集触发信息
         StringBuffer triggerMsgSb = new StringBuffer();
         triggerMsgSb.append(I18nUtil.getString("jobconf_trigger_type")).append("：").append(triggerType.getTitle());
         triggerMsgSb.append("<br>").append(I18nUtil.getString("jobconf_trigger_admin_adress")).append("：").append(IpUtil.getIp());
@@ -170,7 +183,9 @@ public class XxlJobTrigger {
         triggerMsgSb.append("<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_trigger_run") + "<<<<<<<<<<< </span><br>")
                 .append((routeAddressResult != null && routeAddressResult.getMsg() != null) ? routeAddressResult.getMsg() + "<br><br>" : "").append(triggerResult.getMsg() != null ? triggerResult.getMsg() : "");
 
+
         // 6、save log trigger-info
+        // 6、保存触发器信息日志
         jobLog.setExecutorAddress(address);
         jobLog.setExecutorHandler(jobInfo.getExecutorHandler());
         jobLog.setExecutorParam(jobInfo.getExecutorParam());
