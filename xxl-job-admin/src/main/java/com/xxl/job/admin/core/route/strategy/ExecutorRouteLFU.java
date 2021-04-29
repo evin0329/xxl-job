@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ExecutorRouteLFU extends ExecutorRouter {
 
-    private static ConcurrentMap<Integer, HashMap<String, Integer>> jobLfuMap = new ConcurrentHashMap<Integer, HashMap<String, Integer>>();
+    private static ConcurrentMap<Integer/*jobId*/, HashMap<String, Integer>/**/> jobLfuMap = new ConcurrentHashMap<Integer, HashMap<String, Integer>>();
     private static long CACHE_VALID_TIME = 0;
 
     public String route(int jobId, List<String> addressList) {
@@ -55,7 +55,9 @@ public class ExecutorRouteLFU extends ExecutorRouter {
         }
 
         // load least userd count address
+        // 加载最少访问的计数地址
         List<Map.Entry<String, Integer>> lfuItemList = new ArrayList<Map.Entry<String, Integer>>(lfuItemMap.entrySet());
+        // 排序 将最少访问的放在前面
         Collections.sort(lfuItemList, new Comparator<Map.Entry<String, Integer>>() {
             @Override
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
@@ -63,8 +65,10 @@ public class ExecutorRouteLFU extends ExecutorRouter {
             }
         });
 
+        // 获取最少使用的
         Map.Entry<String, Integer> addressItem = lfuItemList.get(0);
         String minAddress = addressItem.getKey();
+        // 访问次数加一
         addressItem.setValue(addressItem.getValue() + 1);
 
         return addressItem.getKey();

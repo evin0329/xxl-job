@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
+ * 任务触发器
+ *
  * xxl-job trigger
  * Created by xuxueli on 17/7/13.
  */
@@ -144,6 +146,7 @@ public class XxlJobTrigger {
         // 4、trigger remote executor
         ReturnT<String> triggerResult = null;
         if (address != null) {
+            // 运行执行器 发送执行任务调度请求到 address
             triggerResult = runExecutor(triggerParam, address);
         } else {
             triggerResult = new ReturnT<String>(ReturnT.FAIL_CODE, null);

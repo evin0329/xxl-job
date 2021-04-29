@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -84,22 +85,27 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
             Method[] methods = bean.getClass().getDeclaredMethods();
             for (Method method : methods) {
                 XxlJob xxlJob = AnnotationUtils.findAnnotation(method, XxlJob.class);
+                // 方法上是否有XxlJob注解
                 if (xxlJob != null) {
 
                     // name
+                    // 任务处理器名称
                     String name = xxlJob.value();
                     if (name.trim().length() == 0) {
                         throw new RuntimeException("xxl-job method-jobhandler name invalid, for[" + bean.getClass() + "#" + method.getName() + "] .");
                     }
+                    // 任务处理器是否不存在
                     if (loadJobHandler(name) != null) {
                         throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
                     }
 
                     // execute method
+                    // 形参是否只有一个
                     if (!(method.getParameterTypes() != null && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(String.class))) {
                         throw new RuntimeException("xxl-job method-jobhandler param-classtype invalid, for[" + bean.getClass() + "#" + method.getName() + "] , " +
                                 "The correct method format like \" public ReturnT<String> execute(String param) \" .");
                     }
+                    // 返回值校验
                     if (!method.getReturnType().isAssignableFrom(ReturnT.class)) {
                         throw new RuntimeException("xxl-job method-jobhandler return-classtype invalid, for[" + bean.getClass() + "#" + method.getName() + "] , " +
                                 "The correct method format like \" public ReturnT<String> execute(String param) \" .");
@@ -110,6 +116,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
                     Method initMethod = null;
                     Method destroyMethod = null;
 
+                    // 加载初始化方法
                     if (xxlJob.init().trim().length() > 0) {
                         try {
                             initMethod = bean.getClass().getDeclaredMethod(xxlJob.init());
@@ -118,6 +125,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
                             throw new RuntimeException("xxl-job method-jobhandler initMethod invalid, for[" + bean.getClass() + "#" + method.getName() + "] .");
                         }
                     }
+                    // 加载销毁方法
                     if (xxlJob.destroy().trim().length() > 0) {
                         try {
                             destroyMethod = bean.getClass().getDeclaredMethod(xxlJob.destroy());
@@ -128,6 +136,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
                     }
 
                     // registry jobhandler
+                    // 注册任务处理器
                     registJobHandler(name, new MethodJobHandler(bean, method, initMethod, destroyMethod));
                 }
             }

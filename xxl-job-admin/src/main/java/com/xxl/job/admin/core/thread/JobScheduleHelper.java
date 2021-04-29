@@ -6,6 +6,7 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -74,24 +75,29 @@ public class JobScheduleHelper {
                         preparedStatement.execute();
 
                         // tx start
+                        // 事务开始
 
                         // 1、pre read
                         long nowTime = System.currentTimeMillis();
                         List<XxlJobInfo> scheduleList = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
-                        if (scheduleList != null && scheduleList.size() > 0) {
+                        if (!CollectionUtils.isEmpty(scheduleList)/*scheduleList != null && scheduleList.size() > 0*/) {
                             // 2、push time-ring
                             for (XxlJobInfo jobInfo : scheduleList) {
 
                                 // time-ring jump
                                 if (nowTime > jobInfo.getTriggerNextTime() + PRE_READ_MS) {
                                     // 2.1、trigger-expire > 5s：pass && make next-trigger-time
+                                    // 2.1、触发到期 > 5s：通过 && 进行下一次触发
                                     logger.warn(">>>>>>>>>>> xxl-job, schedule misfire, jobId = " + jobInfo.getId());
 
                                     // fresh next
+                                    // 刷新下一次执行时间
                                     refreshNextValidTime(jobInfo, new Date());
 
-                                } else if (nowTime > jobInfo.getTriggerNextTime()) {
+                                }
+                                else if (nowTime > jobInfo.getTriggerNextTime()) {
                                     // 2.2、trigger-expire < 5s：direct-trigger && make next-trigger-time
+                                    // 2.2、触发到期 < 5s：直接触发 && 进行下次触发
 
                                     // 1、trigger
                                     JobTriggerPoolHelper.trigger(jobInfo.getId(), TriggerTypeEnum.CRON, -1, null, null);
@@ -114,8 +120,10 @@ public class JobScheduleHelper {
 
                                     }
 
-                                } else {
+                                }
+                                else {
                                     // 2.3、trigger-pre-read：time-ring trigger && make next-trigger-time
+                                    // 2.3、触发预读：定时触发 && 触发下一次触发
 
                                     // 1、make ring second
                                     int ringSecond = (int) ((jobInfo.getTriggerNextTime() / 1000) % 60);
@@ -124,6 +132,7 @@ public class JobScheduleHelper {
                                     pushTimeRing(ringSecond, jobInfo.getId());
 
                                     // 3、fresh next
+                                    // 3、刷新下一次执行时间
                                     refreshNextValidTime(jobInfo, new Date(jobInfo.getTriggerNextTime()));
 
                                 }
@@ -135,11 +144,13 @@ public class JobScheduleHelper {
                                 XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleUpdate(jobInfo);
                             }
 
-                        } else {
+                        }
+                        else {
                             preReadSuc = false;
                         }
 
                         // tx stop
+                        // 事务结束
 
 
                     } catch (Exception e) {
@@ -271,6 +282,7 @@ public class JobScheduleHelper {
     }
 
     private void refreshNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws ParseException {
+        // Cron表达式计算下一次有效时间
         Date nextValidTime = new CronExpression(jobInfo.getJobCron()).getNextValidTimeAfter(fromTime);
         if (nextValidTime != null) {
             jobInfo.setTriggerLastTime(jobInfo.getTriggerNextTime());

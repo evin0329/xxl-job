@@ -147,6 +147,7 @@ public class JobThread extends Thread {
                             futureThread = new Thread(futureTask);
                             futureThread.start();
 
+                            // 超时返回
                             executeResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
                         } catch (TimeoutException e) {
 
