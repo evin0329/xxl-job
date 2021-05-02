@@ -48,8 +48,7 @@ public class XxlJobTrigger {
         if (executorParam != null) {
             jobInfo.setExecutorParam(executorParam);
         }
-        int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
-        XxlJobGroup group = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().load(jobInfo.getJobGroup());
+
 
         // sharding param
         int[] shardingParam = null;
@@ -61,14 +60,21 @@ public class XxlJobTrigger {
                 shardingParam[1] = Integer.valueOf(shardingArr[1]);
             }
         }
+
+        int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
+        XxlJobGroup group = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().load(jobInfo.getJobGroup());
+
         if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null)
                 && group.getRegistryList() != null && !group.getRegistryList().isEmpty()
                 && shardingParam == null) {
-            for (int i = 0; i < group.getRegistryList().size(); i++) {
-                processTrigger(group, jobInfo, finalFailRetryCount, triggerType, i, group.getRegistryList().size());
+            // 分片广播
+            int totalShardNum = group.getRegistryList().size();
+            for (int i = 0; i < totalShardNum; i++) {
+                processTrigger(group, jobInfo, finalFailRetryCount, triggerType, i, totalShardNum);
             }
         } else {
             if (shardingParam == null) {
+                // 索引 和 任务数
                 shardingParam = new int[]{0, 1};
             }
             processTrigger(group, jobInfo, finalFailRetryCount, triggerType, shardingParam[0], shardingParam[1]);
@@ -131,7 +137,7 @@ public class XxlJobTrigger {
         String address = null;
         ReturnT<String> routeAddressResult = null;
         if (group.getRegistryList() != null && !group.getRegistryList().isEmpty()) {
-            // 是否分片广播策略
+            // 是否为分片广播策略
             if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) {
                 if (index < group.getRegistryList().size()) {
                     address = group.getRegistryList().get(index);
@@ -157,9 +163,11 @@ public class XxlJobTrigger {
         // 4、触发远程执行器
         ReturnT<String> triggerResult = null;
         if (address != null) {
-            // 运行执行器 发送执行任务调度请求到 address
+            // 运行执行器 发送执行任务调度请求到客户端
             triggerResult = runExecutor(triggerParam, address);
-        } else {
+        }
+        // 没有可用的客户端地址  ->  失败
+        else {
             triggerResult = new ReturnT<String>(ReturnT.FAIL_CODE, null);
         }
 

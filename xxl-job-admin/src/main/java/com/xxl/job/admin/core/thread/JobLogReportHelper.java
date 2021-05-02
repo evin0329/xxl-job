@@ -30,6 +30,7 @@ public class JobLogReportHelper {
     private volatile boolean toStop = false;
 
     public void start() {
+        // 任务日志报告
         logrThread = new Thread(new Runnable() {
 
             @Override

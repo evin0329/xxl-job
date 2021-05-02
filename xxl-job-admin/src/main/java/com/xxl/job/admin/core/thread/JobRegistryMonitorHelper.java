@@ -34,10 +34,12 @@ public class JobRegistryMonitorHelper {
                 while (!toStop) {
                     try {
                         // auto registry group
+                        // 获取自动注册的执行器组
                         List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().findByAddressType(0);
                         if (groupList != null && !groupList.isEmpty()) {
 
                             // remove dead address (admin/executor)
+                            // 获取长时间未更新状态的实例(admin/executor)，并删除
                             List<Integer> ids = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().findDead(RegistryConfig.DEAD_TIMEOUT, new Date());
                             if (ids != null && ids.size() > 0) {
                                 XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().removeDead(ids);
@@ -84,6 +86,9 @@ public class JobRegistryMonitorHelper {
                             logger.error(">>>>>>>>>>> xxl-job, job registry monitor thread error:{}", e);
                         }
                     }
+
+                    // ---------------------------------------------  next ---------------------------------------------
+
                     try {
                         TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
                     } catch (InterruptedException e) {
