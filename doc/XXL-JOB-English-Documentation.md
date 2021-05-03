@@ -600,7 +600,7 @@ On the log console,you can view task execution log on the executor immediately a
 The task logic exist in the executor project as JobHandler,the develop steps as shown below:
 
 #### Step 1:develp obHandler in the executor project
-    - 1, create new java class implent com.xxl.job.core.handler.IJobHandler;
+    - 1, create new java class implent com.xxl.job.common.handler.IJobHandler;
     - 2, if you add @Component annotation on the top of the class name it’s will be managed as a bean instance by spring container;
     - 3, add  “@JobHandler(value=" customize jobhandler name")” annotation，the value stand for JobHandler name,it will be used as JobHandler property when create a new task in the schedule center.
 
@@ -1003,7 +1003,7 @@ The scheduling center provides API services for executors and business parties t
     3. Executor registration remove services;
     4. Triggers a single execution service, and support the task to be triggered according to the business event;
 
-The scheduling center API service location: com.xxl.job.core.biz.AdminBiz.java
+The scheduling center API service location: com.xxl.job.common.api.AdminBiz.java
 
 The scheduling center API service requests reference code：com.xxl.job.adminbiz.AdminBizTest.java
 

@@ -7,12 +7,12 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
-import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
-import com.xxl.rpc.util.IpUtil;
-import com.xxl.rpc.util.ThrowableUtil;
+import com.xxl.job.common.api.ExecutorBiz;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
+import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
+import com.xxl.rpc.remoting.util.IpUtil;
+import com.xxl.rpc.remoting.util.ThrowableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

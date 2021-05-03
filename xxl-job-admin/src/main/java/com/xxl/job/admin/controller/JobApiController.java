@@ -4,11 +4,11 @@ import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.exception.XxlJobException;
 import com.xxl.job.admin.core.util.JacksonUtil;
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.RegistryParam;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.util.XxlJobRemotingUtil;
+import com.xxl.job.common.api.AdminBiz;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.RegistryParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.util.XxlJobRemotingUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
+ * 处理来自客户端的请求
+ *
  * Created by xuxueli on 17/5/10.
  */
 @Controller
@@ -82,7 +84,6 @@ public class JobApiController {
         // invoke
         return adminBiz.callback(callbackParamList);
     }
-
 
     /**
      * registry

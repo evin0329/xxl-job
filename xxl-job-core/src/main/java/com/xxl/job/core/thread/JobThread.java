@@ -1,10 +1,10 @@
 package com.xxl.job.core.thread;
 
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
 import com.xxl.job.core.executor.XxlJobExecutor;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.handler.IJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.log.XxlJobLogger;
 import com.xxl.job.core.util.ShardingUtil;

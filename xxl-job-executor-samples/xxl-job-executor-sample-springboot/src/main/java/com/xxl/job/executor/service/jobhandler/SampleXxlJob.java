@@ -1,7 +1,7 @@
 package com.xxl.job.executor.service.jobhandler;
 
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.xxl.job.core.log.XxlJobLogger;
 import com.xxl.job.core.util.ShardingUtil;

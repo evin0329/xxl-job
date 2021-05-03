@@ -1,8 +1,8 @@
 package com.xxl.job.admin.core.route.strategy;
 
 import com.xxl.job.admin.core.route.ExecutorRouter;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

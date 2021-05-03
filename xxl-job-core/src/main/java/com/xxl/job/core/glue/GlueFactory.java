@@ -1,7 +1,7 @@
 package com.xxl.job.core.glue;
 
 import com.xxl.job.core.glue.impl.SpringGlueFactory;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.handler.IJobHandler;
 import groovy.lang.GroovyClassLoader;
 
 import java.math.BigInteger;

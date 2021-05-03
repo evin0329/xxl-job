@@ -195,8 +195,8 @@
 package com.xxl.job.service.handler;
 
 import com.xxl.job.core.log.XxlJobLogger;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.biz.com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.handler.IJobHandler;
 
 public class DemoGlueJobHandler extends IJobHandler {
 

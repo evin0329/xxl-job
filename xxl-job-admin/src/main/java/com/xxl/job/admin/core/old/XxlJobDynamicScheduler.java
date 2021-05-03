@@ -9,7 +9,7 @@
 //import com.xxl.job.admin.core.util.I18nUtil;
 //import com.xxl.job.core.biz.AdminBiz;
 //import com.xxl.job.core.biz.ExecutorBiz;
-//import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
+//import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 //import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
 //import com.xxl.rpc.remoting.invoker.call.CallType;
 //import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;

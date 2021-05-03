@@ -1,6 +1,6 @@
 package com.xxl.job.core.log;
 
-import com.xxl.job.core.util.DateUtil;
+import com.xxl.job.common.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.FormattingTuple;

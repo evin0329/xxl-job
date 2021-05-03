@@ -1,14 +1,14 @@
 package com.xxl.job.core.biz.impl;
 
-import com.xxl.job.core.biz.ExecutorBiz;
-import com.xxl.job.core.biz.model.LogResult;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.biz.model.TriggerParam;
-import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
+import com.xxl.job.common.api.ExecutorBiz;
+import com.xxl.job.common.enums.GlueTypeEnum;
+import com.xxl.job.common.model.LogResult;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.model.TriggerParam;
+import com.xxl.job.common.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.glue.GlueFactory;
-import com.xxl.job.core.glue.GlueTypeEnum;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.handler.IJobHandler;
 import com.xxl.job.core.handler.impl.GlueJobHandler;
 import com.xxl.job.core.handler.impl.ScriptJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
+ * 处理来自admin请求
+ *
  * Created by xuxueli on 17/3/1.
  */
 public class ExecutorBizImpl implements ExecutorBiz {

@@ -1,22 +1,24 @@
 package com.xxl.job.core.executor;
 
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.ExecutorBiz;
+import com.xxl.job.common.api.ExecutorBiz;
+import com.xxl.job.common.api.AdminBiz;
+import com.xxl.rpc.remoting.net.Server;
+import com.xxl.rpc.remoting.net.model.BaseCallback;
+import com.xxl.rpc.remoting.net.netty.server.NettyHttpServer;
+import com.xxl.rpc.remoting.util.IpUtil;
+import com.xxl.rpc.remoting.util.NetUtil;
 import com.xxl.job.core.biz.client.AdminBizClient;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.handler.IJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
 import com.xxl.job.core.thread.JobLogFileCleanThread;
 import com.xxl.job.core.thread.JobThread;
 import com.xxl.job.core.thread.TriggerCallbackThread;
-import com.xxl.rpc.registry.ServiceRegistry;
-import com.xxl.rpc.remoting.net.impl.netty_http.server.NettyHttpServer;
-import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
-import com.xxl.rpc.serialize.Serializer;
-import com.xxl.rpc.serialize.impl.HessianSerializer;
-import com.xxl.rpc.util.IpUtil;
-import com.xxl.rpc.util.NetUtil;
+import com.xxl.rpc.remoting.XxlRpcProviderFactory;
+
+import com.xxl.rpc.remoting.serialize.Serializer;
+import com.xxl.rpc.remoting.serialize.impl.HessianSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +98,12 @@ public class XxlJobExecutor {
 
     public void destroy() {
         // destory executor-server
-        stopRpcProvider();
+        try {
+            xxlRpcProviderFactory.stop();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+//        stopRpcProvider();
 
         // destory jobThreadRepository
         if (jobThreadRepository.size() > 0) {
@@ -168,19 +175,38 @@ public class XxlJobExecutor {
         xxlRpcProviderFactory.setIp(ip);
         xxlRpcProviderFactory.setPort(port);
         xxlRpcProviderFactory.setAccessToken(accessToken);
-        xxlRpcProviderFactory.setServiceRegistry(ExecutorServiceRegistry.class);
+        xxlRpcProviderFactory.setStartedCallback(new BaseCallback() {        // serviceRegistry started
+            @Override
+            public void run() throws Exception {
+                // start registry
+                ExecutorRegistryThread.getInstance().start(serviceRegistryParam.get("appName"), serviceRegistryParam.get("address"));
+
+            }
+        });
+        xxlRpcProviderFactory.setStopedCallback(new BaseCallback() {        // serviceRegistry stoped
+            @Override
+            public void run() {
+                // stop registry
+                ExecutorRegistryThread.getInstance().toStop();
+            }
+        });
+
+
+//        xxlRpcProviderFactory.setServiceRegistry(ExecutorServiceRegistry.class);
         xxlRpcProviderFactory.setServiceRegistryParam(serviceRegistryParam);
 
         // add services
-        xxlRpcProviderFactory.addService(ExecutorBiz.class.getName(), null, new ExecutorBizImpl());
+//        xxlRpcProviderFactory.addService(ExecutorBiz.class.getName(), null, new ExecutorBizImpl());
 
         // start
         // 开启远程调用服务
-        xxlRpcProviderFactory.start();
+        Server serverInstance = xxlRpcProviderFactory.getServerInstance();
+        serverInstance.addService(ExecutorBiz.class.getName(), null, new ExecutorBizImpl());
 
+        serverInstance.start();
     }
 
-    public static class ExecutorServiceRegistry extends ServiceRegistry {
+    /*public static class ExecutorServiceRegistry extends ServiceRegistry {
 
         @Override
         public void start(Map<String, String> param) {
@@ -223,7 +249,7 @@ public class XxlJobExecutor {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-    }
+    }*/
 
 
     // ---------------------- job handler repository ----------------------

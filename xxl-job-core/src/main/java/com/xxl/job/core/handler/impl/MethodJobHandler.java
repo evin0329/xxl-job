@@ -1,7 +1,7 @@
 package com.xxl.job.core.handler.impl;
 
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.handler.IJobHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

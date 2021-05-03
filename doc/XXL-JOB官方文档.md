@@ -698,7 +698,7 @@ public XxlJobSpringExecutor xxlJobExecutor() {
 
 #### 步骤一：执行器项目中，开发Job类：
 
-    - 1、开发一个继承自"com.xxl.job.core.handler.IJobHandler"的JobHandler类。
+    - 1、开发一个继承自"com.xxl.job.common.handler.IJobHandler"的JobHandler类。
     - 2、手动通过如下方式注入到执行器容器。
     ```
     XxlJobExecutor.registJobHandler("demoJobHandler", new DemoJobHandler());
@@ -1179,7 +1179,7 @@ echo "分片总数 total = $3"
     3、执行器注册摘除服务；
     4、触发任务单次执行服务，支持任务根据业务事件触发；
     
-API服务位置：com.xxl.job.core.biz.AdminBiz.java  
+API服务位置：com.xxl.job.common.api.AdminBiz.java  
 API服务请求参考代码：com.xxl.job.adminbiz.AdminBizTest.java
 
 #### 5.11.2 提供给业务的API服务：

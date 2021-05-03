@@ -16,10 +16,28 @@
 	<dependencies>
 
 		<!-- xxl-rpc-core -->
+<!--		<dependency>-->
+<!--			<groupId>com.xuxueli</groupId>-->
+<!--			<artifactId>xxl-rpc-core</artifactId>-->
+<!--			<version>${xxl-rpc.version}</version>-->
+<!--		</dependency>-->
+
 		<dependency>
 			<groupId>com.xuxueli</groupId>
-			<artifactId>xxl-rpc-core</artifactId>
-			<version>${xxl-rpc.version}</version>
+			<artifactId>xxl-job-remoting</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-job-commom</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xxl-job-rpc</artifactId>
+					<groupId>com.xuxueli</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- groovy-all -->
@@ -49,6 +67,8 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+
 
 	</dependencies>
 

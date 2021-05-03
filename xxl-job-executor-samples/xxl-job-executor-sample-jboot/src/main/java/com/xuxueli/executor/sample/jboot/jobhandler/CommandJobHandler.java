@@ -1,7 +1,7 @@
 package com.xuxueli.executor.sample.jboot.jobhandler;
 
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.handler.IJobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 
 import java.io.BufferedInputStream;

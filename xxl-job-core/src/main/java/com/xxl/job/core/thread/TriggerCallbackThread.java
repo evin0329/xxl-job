@@ -1,9 +1,9 @@
 package com.xxl.job.core.thread;
 
-import com.xxl.job.core.biz.AdminBiz;
-import com.xxl.job.core.biz.model.HandleCallbackParam;
-import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.enums.RegistryConfig;
+import com.xxl.job.common.model.HandleCallbackParam;
+import com.xxl.job.common.model.ReturnT;
+import com.xxl.job.common.api.AdminBiz;
+import com.xxl.job.common.enums.RegistryConfig;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.log.XxlJobLogger;
